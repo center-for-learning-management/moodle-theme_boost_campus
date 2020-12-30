@@ -102,9 +102,18 @@ class core_renderer extends \core_renderer {
      * @return moodle_url The moodle_url for the favicon
      */
     public function favicon() {
+        global $CFG;
+        /*
+         * The following line should fix the "get_icon" error, as favicon could
+         * return Strings in some cases.
+         * Solution taken from https://github.com/dbnschools/moodle-theme_fordson/issues/26
+         */
+
         // MODIFICATION START.
         if (!empty($this->page->theme->settings->favicon)) {
-            return $this->page->theme->setting_file_url('favicon', 'favicon');
+            $url = $CFG->wwwroot . strstr($this->page->theme->setting_file_url('favicon', 'favicon'),"/pluginfile.php");
+            $faviconurl = new  \moodle_url($url);
+            return $faviconurl;
         } else {
             return $this->image_url('favicon', 'theme');
         }
